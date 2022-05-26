@@ -243,12 +243,12 @@ router.post("/diagnoses", [auth, admin], async (req, res)=>{
 			sore_throat: req.query.sore_throat,
 			cold: req.query.cold,
 			short_breath: req.query.short_breath,
-			vomiting: req.query.muntah,
+			vomit: req.query.muntah,
 			day_to_heal: req.query.day_to_heal,
 			created_at: created_at,
 			id_user: req.query.id_user,
 		}
-		const query1 = "INSERT INTO tbdiagnose (age, gender, fever, cough, tired, sore_throat, cold, short_breath, vomiting, day_to_heal, created_at, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		const query1 = "INSERT INTO tbdiagnose (age, gender, fever, cough, tired, sore_throat, cold, short_breath, vomit, day_to_heal, created_at, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		pool.query(query1, Object.values(data), (error)=>{
 				if (error){
 						res.json({status: "Error", message : "Please fill correctly!"});
