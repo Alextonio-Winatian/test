@@ -7,5 +7,4 @@ const pool = mysql.createPool({
 	socketPath: process.env.INSTANCE_CONNECTION_NAME,
 });
 
-// Export the router
 module.exports = pool;
