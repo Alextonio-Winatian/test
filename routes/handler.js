@@ -1,18 +1,10 @@
 const express = require("express")
-
 const bcrypt = require("bcrypt")
-
-// Import middlewares
 const auth = require("../middleware/auth");
 const { admin, user } = require("../middleware/roles");
-
 const pool = require("../sql");
-// Setup the router for express
-const router = express.Router();
 
-// *************************
-// Set up the route handlers
-// *************************
+const router = express.Router();
 
 //GET USER ALL DATA
 router.get("/users", [auth, admin], async (req, res)=>{
@@ -81,7 +73,7 @@ router.get("/diagnoses/:id", [auth, admin], async (req, res)=>{
 
 //GET RECOMENDATION DATA BY ID
 router.get("/recomendations/:id", [auth, admin], async (req, res)=>{
-	const query = "SELECT * FROM tbrecom WHERE id_rekomendasi = ?";
+	const query = "SELECT * FROM tbrecom WHERE id_recomendations = ?";
 	pool.query(query, [req.params.id], (error, result)=>{
 		if (!result[0]) {
 			res.json({status: "Error", message: "User Not found!"});
@@ -147,6 +139,7 @@ router.post("/register", [auth, admin], async (req, res)=>{
   	const updatedAt = created_at;
 		const data = {
 			username: req.query.username,
+			gender: req.query.gender,
 			full_name: req.query.full_name,
 			email: req.query.email,
 			password: hashedPassword,
@@ -155,7 +148,7 @@ router.post("/register", [auth, admin], async (req, res)=>{
 			created_at: created_at,
 			updated_at: updatedAt,
 		}
-		const query1 = "INSERT INTO tbuserwaras ( username, full_name,  email, password, telephone, date_of_birth, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		const query1 = "INSERT INTO tbuserwaras ( username, gender, full_name,  email, password, telephone, date_of_birth, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		pool.query(query1, Object.values(data), (error)=>{
 				if (error){
 						res.json({status: "Error", message : "Username and/or Email already exists!" });
@@ -242,20 +235,20 @@ router.post("/diagnoses", [auth, admin], async (req, res)=>{
 	try {
 		const created_at = new Date().toISOString();
 		const data = {
-			umur: req.query.umur,
+			age: req.query.age,
 			gender: req.query.gender,
-			demam: req.query.demam,
-			batuk: req.query.batuk,
-			kelelahan: req.query.kelelahan,
-			sakit_tenggorokan: req.query.sakit_tenggorokan,
-			pilek: req.query.pilek,
-			sesak_napas: req.query.sesak_napas,
-			muntah: req.query.muntah,
-			lama_hari_sembuh: req.query.lama_hari_sembuh,
+			fever: req.query.fever,
+			cough: req.query.cough,
+			tired: req.query.tired,
+			sore_throat: req.query.sore_throat,
+			cold: req.query.cold,
+			short_breath: req.query.short_breath,
+			vomiting: req.query.muntah,
+			day_to_heal: req.query.day_to_heal,
 			created_at: created_at,
 			id_user: req.query.id_user,
 		}
-		const query1 = "INSERT INTO tbdiagnose (umur, gender, demam, batuk, kelelahan, sakit_tenggorokan, pilek, sesak_napas, muntah, lama_hari_sembuh, created_at, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		const query1 = "INSERT INTO tbdiagnose (age, gender, fever, cough, tired, sore_throat, cold, short_breath, vomiting, day_to_heal, created_at, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		pool.query(query1, Object.values(data), (error)=>{
 				if (error){
 						res.json({status: "Error", message : "Please fill correctly!"});
@@ -273,11 +266,11 @@ router.post("/recomendations", [auth, admin], async (req, res)=>{
 	try {
 		const created_at = new Date().toISOString();
 		const data = {
-			rekomendasi: req.query.rekomendasi,
+			recomendations: req.query.recomendations,
 			created_at: created_at,
 			id_user: req.query.id_user,
 		}
-		const query1 = "INSERT INTO tbrecom (rekomendasi, created_at, id_user) VALUES (?, ?, ?)";
+		const query1 = "INSERT INTO tbrecom (recomendations, created_at, id_user) VALUES (?, ?, ?)";
 		pool.query(query1, Object.values(data), (error)=>{
 				if (error){
 						res.json({status: "Error", message : "Please fill correctly!"});
@@ -291,17 +284,17 @@ router.post("/recomendations", [auth, admin], async (req, res)=>{
 });
 
 //POST dataRecomendation TO DB
-router.post("/dataRecomendation",[auth, admin],  async (req, res)=>{
+router.post("/dataRecomendations",[auth, admin],  async (req, res)=>{
 	try {
 		const data = {
-			data_rekomendasi: req.query.data_rekomendasi,
+			data_recomendations: req.query.data_recomendations,
 		}
-		const query1 = "INSERT INTO tbdatarecom (data_rekomendasi) VALUES (?)";
+		const query1 = "INSERT INTO tbdatarecom (data_recomendations) VALUES (?)";
 		pool.query(query1, Object.values(data), (error)=>{
 				if (error){
 						res.json({status: "Error", message : "Please fill correctly!"});
 				} else {
-						res.json({status: "Success", message : "dataRecomendation Created!" });
+						res.json({status: "Success", message : "dataRecomendations Created!" });
 				}
 		});
   } catch {
@@ -314,12 +307,12 @@ router.post("/history", [auth, admin], async (req, res)=>{
 	try {
 		const created_at = new Date().toISOString();
 		const data = {
-			lama_hari_sembuh: req.query.lama_hari_sembuh,
-			rekomendasi: req.query.rekomendasi,
+			day_to_heal: req.query.day_to_heal,
+			recomendations: req.query.recomendations,
 			created_at: created_at,
 			id_user: req.query.id_user,
 		}
-		const query1 = "INSERT INTO tbhistory (lama_hari_sembuh, rekomendasi, created_at, id_user) VALUES (?, ?, ?, ?)";
+		const query1 = "INSERT INTO tbhistory (day_to_heal, recomendations, created_at, id_user) VALUES (?, ?, ?, ?)";
 		pool.query(query1, Object.values(data), (error)=>{
 				if (error){
 						res.json({status: "Error", message : "Please fill correctly!"});
@@ -415,5 +408,4 @@ router.delete("/users/:id", [auth, admin], async (req, res)=>{
 		}
 });
 
-// Export the router
 module.exports = router;

@@ -6,10 +6,10 @@ app.use(express.json());
 
 // Import routes
 const authRouter = require("./routes/auth");
-const messagesRouter = require("./routes/index");
+const handlerRouter = require("./routes/handler");
 
 // Setup all the routes
-app.use("/api/messages", messagesRouter);
+app.use("/api/handler", handlerRouter);
 app.use("/api/auth", authRouter);
 
 const port = process.env.port || 8080;
